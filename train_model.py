@@ -14,7 +14,7 @@ def BIAS(train_data, coefficients):
 def MSE(train_data):
     return((train_data['bias']**2).sum())
 
-def descent_gradient(train_data, coefficients, gamma_0 = 1, gamma_min = 1e-5, reduction_factor = .1):
+def gradient_descent(train_data, coefficients, gamma_0 = 1, gamma_min = 1e-5, reduction_factor = .1):
     previous_mse = MSE(train_data)
     while gamma_0 > gamma_min:
         if MSE(train_data) > previous_mse: #Overshot the min -> recover values and Reduce gamma and 
@@ -30,17 +30,16 @@ def descent_gradient(train_data, coefficients, gamma_0 = 1, gamma_min = 1e-5, re
     return coefficients
 
 def main():
-    #Read data0
+    #Read data
     train_data = pd.read_csv("./data.csv")
     
     #Normalize data
     normalized_data = train_data/train_data.max() 
     
     #Calculate coefficients
-    tmp_theta = np.array([0,0])
     tmp_theta = [0, 0]
     normalized_data['bias'] = BIAS(normalized_data, tmp_theta)
-    coefficients = descent_gradient(normalized_data, tmp_theta)
+    coefficients = gradient_descent(normalized_data, tmp_theta)
     #test_coefficients = np.polyfit(normalized_data['km'], normalized_data['price'], 1)
     
     # Denormalize coefficients
