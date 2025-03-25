@@ -17,7 +17,7 @@ def MSE(train_data):
 def gradient_descent(train_data, coefficients, gamma_0 = 1, gamma_min = 1e-5, reduction_factor = .1):
     previous_mse = MSE(train_data)
     while gamma_0 > gamma_min:
-        if MSE(train_data) > previous_mse: #Overshot the min -> recover values and Reduce gamma and 
+        if MSE(train_data) > previous_mse: #Overshot the min -> recover values and Reduce gamma 
             gamma_0*= reduction_factor
             coefficients = previous_coefficients
             train_data['bias'] = BIAS(train_data, coefficients)
@@ -31,7 +31,11 @@ def gradient_descent(train_data, coefficients, gamma_0 = 1, gamma_min = 1e-5, re
 
 def main():
     #Read data
-    train_data = pd.read_csv("./data.csv")
+    try:
+        train_data = pd.read_csv("./data.csv")
+    except
+        print("Unable to read train dataset")
+        return
     
     #Normalize data
     normalized_data = train_data/train_data.max() 
@@ -40,12 +44,13 @@ def main():
     tmp_theta = [0, 0]
     normalized_data['bias'] = BIAS(normalized_data, tmp_theta)
     coefficients = gradient_descent(normalized_data, tmp_theta)
-    #test_coefficients = np.polyfit(normalized_data['km'], normalized_data['price'], 1)
+    test_coefficients = np.polyfit(normalized_data['km'], normalized_data['price'], 1)
     
     # Denormalize coefficients
     coefficients[1] /= train_data.max()['km']
     coefficients = [i * train_data.max()['price'] for i in coefficients]
-    #test_coefficients = [test_coefficients[0]*train_data.max()['price'], test_coefficients[1]*train_data.max()['price']/train_data.max()['km']] #Reverse Normalization
+    #test_coefficients[0] /= train_data.max()['km']
+    #test_coefficients *= train_data.max()['price']
     
     #Calcular precision
     train_data['bias'] = BIAS(train_data, coefficients)
@@ -55,15 +60,9 @@ def main():
     #Plot fit
     plt.scatter('km', 'price', data = train_data, label='data')
     plt.axline((0, coefficients[0]), slope = coefficients[1], label = 'gradient_descent')
-    #test_coefficients[0] /= train_data.max()['km']
-    #test_coefficients *= train_data.max()['price']
-    #plt.axline((0, test_coefficients[1]), slope = test_coefficients[0], color = 'r', label='numpy')
+    #plt.axline((0, test_coefficients[1]), slope = test_coefficients[0], color = 'r', linestyle = '--', label='numpy')
     plt.legend()
     plt.show()
-    
-    #save result
-    np.array(coefficients).tofile('.coefficients.txt', sep = '\t', format = '%s')
-    #np.array(test_coefficients).tofile('.test_cf.txt', sep = '\t', format = '%s')
 
 if __name__ == '__main__':
     main()
