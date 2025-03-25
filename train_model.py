@@ -33,7 +33,7 @@ def main():
     #Read data
     try:
         train_data = pd.read_csv("./data.csv")
-    except
+    except:
         print("Unable to read train dataset")
         return
     
@@ -44,7 +44,7 @@ def main():
     tmp_theta = [0, 0]
     normalized_data['bias'] = BIAS(normalized_data, tmp_theta)
     coefficients = gradient_descent(normalized_data, tmp_theta)
-    test_coefficients = np.polyfit(normalized_data['km'], normalized_data['price'], 1)
+    #test_coefficients = np.polyfit(normalized_data['km'], normalized_data['price'], 1)
     
     # Denormalize coefficients
     coefficients[1] /= train_data.max()['km']
@@ -57,6 +57,10 @@ def main():
     P = (1 - train_data['bias'].var()/train_data['price'].var())*100
     print(f"Varianza explicada: {P:.2f}%")
 
+    #save result
+    np.array(coefficients).tofile('.coefficients.txt', sep = '\t', format = '%s')
+    #np.array(test_coefficients).tofile('.test_cf.txt', sep = '\t', format = '%s')
+    
     #Plot fit
     plt.scatter('km', 'price', data = train_data, label='data')
     plt.axline((0, coefficients[0]), slope = coefficients[1], label = 'gradient_descent')
